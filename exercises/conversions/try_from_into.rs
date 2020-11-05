@@ -11,8 +11,6 @@ struct Color {
     blue: u8,
 }
 
-// I AM NOT DONE
-
 // Your task is to complete this implementation
 // and return an Ok result of inner type Color.
 // You need create implementation for a tuple of three integer,
@@ -22,10 +20,25 @@ struct Color {
 // but slice implementation need check slice length!
 // Also note, that chunk of correct rgb color must be integer in range 0..=255.
 
+const RGB_MIN: i16 = 0;
+const RGB_MAX: i16 = 255;
+
 // Tuple implementation
 impl TryFrom<(i16, i16, i16)> for Color {
     type Error = String;
     fn try_from(tuple: (i16, i16, i16)) -> Result<Self, Self::Error> {
+
+        if RGB_MIN > tuple.0 || tuple.0 > RGB_MAX {
+            return Err("Invalid color range".to_string());
+        }
+        if RGB_MIN > tuple.1 || tuple.1 > RGB_MAX {
+            return Err("Invalid color range".to_string());
+        }
+        if RGB_MIN > tuple.2 || tuple.2 > RGB_MAX {
+            return Err("Invalid color range".to_string());
+        }
+
+        return Ok(Color{red: tuple.0 as u8, green: tuple.1 as u8, blue: tuple.2 as u8});
     }
 }
 
@@ -33,6 +46,12 @@ impl TryFrom<(i16, i16, i16)> for Color {
 impl TryFrom<[i16; 3]> for Color {
     type Error = String;
     fn try_from(arr: [i16; 3]) -> Result<Self, Self::Error> {
+        for value in arr.iter() {
+            if &RGB_MIN > value || value > &RGB_MAX {
+                return Err("Invalid color range".to_string());
+            }
+        }
+        return Ok(Color{red: arr[0] as u8, green: arr[1] as u8, blue: arr[2] as u8});
     }
 }
 
@@ -40,6 +59,15 @@ impl TryFrom<[i16; 3]> for Color {
 impl TryFrom<&[i16]> for Color {
     type Error = String;
     fn try_from(slice: &[i16]) -> Result<Self, Self::Error> {
+        if slice.len() != 3 {
+            return Err("Invalid amount of color channels".to_string());
+        }
+        for value in slice.iter() {
+            if &RGB_MIN > value || value > &RGB_MAX {
+                return Err("Invalid color range".to_string());
+            }
+        }
+        return Ok(Color{red: slice[0] as u8, green: slice[1] as u8, blue: slice[2] as u8});
     }
 }
 
